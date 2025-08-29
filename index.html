@@ -1,440 +1,131 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MLB Live Roster — Ligas y Divisiones</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MLB Live Roster — Equipos DISPONIBLES</title>
 <style>
-  :root {
-    --blue:#00B0F0; --yellow:#FFFF00; --grey:#BFBFBF; --orange:#FFC000; --white:#FFFFFF;
-    --bg:#0b0f17; --card:#121826; --text:#e8eef9; --muted:#9fb0c3; --line:#22304a;
+  :root{
+    --bg:#0b0f17; --card:#121826; --muted:#9fb0c3; --text:#e8eef9; --line:#22304a;
+    --brand:#76a9fa; --chip:#1b2540; --ok:#2dd4bf; --warn:#faca15;
   }
   *{box-sizing:border-box}
-  body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; background:var(--bg); color:var(--text);}
-  header.sticky{position:sticky; top:0; z-index:9; backdrop-filter: blur(8px);
-    background: linear-gradient(180deg, rgba(11,15,23,.85), rgba(11,15,23,.6)); border-bottom:1px solid var(--line);}
-  .wrap{max-width:1400px; margin:0 auto; padding:16px 20px;}
-  h1{margin:0 0 6px;font-size:22px;letter-spacing:.3px}
-  .toolbar{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+  html,body{height:100%}
+  body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; background:var(--bg); color:var(--text)}
+  header{position:sticky; top:0; z-index:10; background:linear-gradient(180deg, rgba(11,15,23,.95), rgba(11,15,23,.65)); border-bottom:1px solid var(--line); backdrop-filter: blur(8px)}
+  .wrap{max-width:1100px; margin:0 auto; padding:16px 20px}
+  h1{margin:0; font-size:22px; letter-spacing:.3px}
+  .sub{margin-top:6px; font-size:12.5px; color:var(--muted)}
+  .toolbar{display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap}
   .search{flex:1; min-width:260px}
-  .search input{width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:#0e1525; color:var(--text); outline:none}
-  .legend{font-size:12px; color:var(--muted)}
-  .section{padding:16px 20px}
-  .div-title{font-size:18px; margin:8px 0 12px; color:#d5e4ff}
-  .grid{display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(360px,1fr));}
-  .team{background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.25)}
-  .team header{background:#10182a; border-bottom:1px solid var(--line);}
-  .team-title{display:flex; align-items:center; justify-content:space-between; padding:10px 12px}
-  .team-title h2{margin:0; font-size:16px}
-  .team-title .count{font-size:12px; color:var(--muted)}
-  table{width:100%; border-collapse:collapse; font-size:13px; table-layout:fixed;}
-  col.name{width:24ch}
-  col.team{width:14ch}
-  col.pos{width:10ch}
-  col.ovr{width:9ch}
-  thead th{position:sticky; top:0; background:#0f1627; color:#cfe0ff; border-bottom:1px solid var(--line); padding:6px 8px; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  tbody td{padding:5px 8px; border-bottom:1px dashed #1e2a45; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  tbody tr:hover{outline:1px solid #2a406d}
-  tr.band-blue td{background:var(--blue); color:#002a3a; font-weight:600}
-  tr.band-yellow td{background:var(--yellow); color:#2a2a00; font-weight:600}
-  tr.band-grey td{background:var(--grey); color:#1a1a1a; font-weight:600}
-  tr.band-orange td{background:var(--orange); color:#3a2400; font-weight:600}
-  tr.band-white td{background:var(--white); color:#111}
-  tbody td.namec{font-weight:600}
-  .footer{color:var(--muted); font-size:12px; text-align:center; padding:20px}
+  .search input{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:#0e1525; color:var(--text); outline:none}
+  .chip{padding:6px 10px; background:var(--chip); color:#cfe0ff; border:1px solid var(--line); border-radius:100px; font-size:12px}
+  main{max-width:1100px; margin:0 auto; padding:18px 20px}
+
+  /* grid */
+  .grid{display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; display:flex; align-items:center; gap:12px; transition:transform .15s ease, box-shadow .15s ease}
+  .card:hover{transform:translateY(-2px); box-shadow:0 10px 22px rgba(0,0,0,.35)}
+  .mono{width:40px; height:40px; border-radius:10px; display:grid; place-items:center; background:#0f1b33; color:#a6c1ff; font-weight:700; border:1px solid var(--line)}
+  .name{font-size:15px; font-weight:600}
+  .meta{font-size:12px; color:var(--muted)}
+  .tag{margin-left:auto; font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid var(--line); color:#d5e4ff; background:#0f1c33}
+
+  /* footer */
+  footer{color:var(--muted); font-size:12px; text-align:center; padding:24px 12px}
+
+  /* utility */
+  .row{display:flex; gap:8px; align-items:center}
+  .count{font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
-<header class="sticky">
+<header>
   <div class="wrap">
-    <h1>MLB Live Roster — Ligas y Divisiones</h1>
+    <h1>MLB Live Roster — <span style="color:var(--brand)">Equipos disponibles</span></h1>
+    <div class="sub">Lista curada para el draft: solo franquicias habilitadas. Busca, filtra y ordénalas a tu gusto.</div>
     <div class="toolbar">
-      <div class="search"><input id="q" type="search" placeholder="Buscar jugador, equipo o posición (ej. Trout, Angels, SP)" /></div>
-      <div class="legend">Colores — 99–85 azul · 84–80 amarillo · 79–75 gris · 74–65 naranja · 64–50 blanco</div>
+      <label class="search">
+        <input id="q" type="search" placeholder="Buscar equipo (ej. Astros, Royals, Mets)" />
+      </label>
+      <span class="chip"><span class="count" id="count">21</span> equipos</span>
+      <button id="orderAZ" class="chip" title="Ordenar alfabéticamente">A→Z</button>
+      <button id="orderDiv" class="chip" title="Agrupar por liga (AL/NL)">Agrupar por liga</button>
     </div>
   </div>
 </header>
+
 <main>
-
-      <section class="section">
-        <div class="div-title">AL East</div>
-        <div class="grid">
-          
-        <section class="team" id="Baltimore_Orioles">
-          <header class="team-title"><h2>Baltimore Orioles</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Gunnar Henderson</td><td>Orioles</td><td>SS</td><td>86</td></tr><tr class="band-yellow"><td class="namec">Adley Rutschman</td><td>Orioles</td><td>C</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Jordan Westburg</td><td>Orioles</td><td>3B</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Colton Cowser</td><td>Orioles</td><td>RF</td><td>80</td></tr><tr class="band-grey"><td class="namec">Tyler O'Neill</td><td>Orioles</td><td>RF</td><td>79</td></tr><tr class="band-grey"><td class="namec">Jackson Holliday</td><td>Orioles</td><td>2B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Felix Bautista</td><td>Orioles</td><td>CP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Trevor Rogers</td><td>Orioles</td><td>SP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Gary Sánchez</td><td>Orioles</td><td>C</td><td>76</td></tr><tr class="band-orange"><td class="namec">Dean Kremer</td><td>Orioles</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Zach Eflin</td><td>Orioles</td><td>SP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Heston Kjerstad</td><td>Orioles</td><td>LF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Ryan Mountcastle</td><td>Orioles</td><td>1B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Coby Mayo</td><td>Orioles</td><td>3B</td><td>70</td></tr><tr class="band-orange"><td class="namec">Cade Povich</td><td>Orioles</td><td>SP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Tomoyuki Sugano</td><td>Orioles</td><td>SP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Chayce McDermott</td><td>Orioles</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Daniel Johnson</td><td>Orioles</td><td>RF</td><td>68</td></tr><tr class="band-orange"><td class="namec">Dylan Carlson</td><td>Orioles</td><td>LF</td><td>67</td></tr><tr class="band-orange"><td class="namec">Colin Selby</td><td>Orioles</td><td>RP</td><td>67</td></tr><tr class="band-orange"><td class="namec">Keegan Akin</td><td>Orioles</td><td>RP</td><td>66</td></tr><tr class="band-orange"><td class="namec">Luis Vazquez</td><td>Orioles</td><td>SS</td><td>66</td></tr><tr class="band-orange"><td class="namec">Matt Bowman</td><td>Orioles</td><td>RP</td><td>66</td></tr><tr class="band-orange"><td class="namec">Alex Jackson</td><td>Orioles</td><td>C</td><td>65</td></tr><tr class="band-white"><td class="namec">Jordyn Adams</td><td>Orioles</td><td>CF</td><td>64</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Boston_Red_Sox">
-          <header class="team-title"><h2>Boston Red Sox</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-grey"><td class="namec">Mike Tauchman</td><td>White Sox</td><td>RF</td><td>77</td></tr><tr class="band-grey"><td class="namec">Luis Robert Jr.</td><td>White Sox</td><td>CF</td><td>77</td></tr><tr class="band-grey"><td class="namec">Michael A. Taylor</td><td>White Sox</td><td>CF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Kyle Teel</td><td>White Sox</td><td>C</td><td>76</td></tr><tr class="band-grey"><td class="namec">Chase Meidroth</td><td>White Sox</td><td>SS</td><td>76</td></tr><tr class="band-grey"><td class="namec">Aaron Civale</td><td>White Sox</td><td>SP</td><td>75</td></tr><tr class="band-grey"><td class="namec">Edgar Quero</td><td>White Sox</td><td>C</td><td>75</td></tr><tr class="band-grey"><td class="namec">Miguel Vargas</td><td>White Sox</td><td>3B</td><td>75</td></tr><tr class="band-grey"><td class="namec">Andrew Benintendi</td><td>White Sox</td><td>LF</td><td>75</td></tr><tr class="band-grey"><td class="namec">Shane Smith</td><td>White Sox</td><td>SP</td><td>75</td></tr><tr class="band-orange"><td class="namec">Lenyn Sosa</td><td>White Sox</td><td>2B</td><td>74</td></tr><tr class="band-orange"><td class="namec">Colson Montgomery</td><td>White Sox</td><td>SS</td><td>73</td></tr><tr class="band-orange"><td class="namec">Bryan Hudson</td><td>White Sox</td><td>RP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Davis Martin</td><td>White Sox</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Dan Altavilla</td><td>White Sox</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Brooks Baldwin</td><td>White Sox</td><td>SS</td><td>72</td></tr><tr class="band-orange"><td class="namec">Jonathan Cannon</td><td>White Sox</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Tyler Alexander</td><td>White Sox</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Korey Lee</td><td>White Sox</td><td>C</td><td>70</td></tr><tr class="band-orange"><td class="namec">Jordan Leasure</td><td>White Sox</td><td>RP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Sean Burke</td><td>White Sox</td><td>SP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Mike Vasil</td><td>White Sox</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Martín Pérez</td><td>White Sox</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Tim Elko</td><td>White Sox</td><td>1B</td><td>68</td></tr><tr class="band-orange"><td class="namec">Tyler Gilbert</td><td>White Sox</td><td>RP</td><td>68</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="New_York_Yankees">
-          <header class="team-title"><h2>New York Yankees</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Aaron Judge</td><td>Yankees</td><td>RF</td><td>94</td></tr><tr class="band-blue"><td class="namec">Cody Bellinger</td><td>Yankees</td><td>CF</td><td>87</td></tr><tr class="band-blue"><td class="namec">Gerrit Cole</td><td>Yankees</td><td>SP</td><td>85</td></tr><tr class="band-yellow"><td class="namec">Carlos Rodón</td><td>Yankees</td><td>SP</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Fernando Cruz</td><td>Yankees</td><td>RP</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Jazz Chisholm Jr.</td><td>Yankees</td><td>2B</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Max Fried</td><td>Yankees</td><td>SP</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Trent Grisham</td><td>Yankees</td><td>CF</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Paul Goldschmidt</td><td>Yankees</td><td>1B</td><td>80</td></tr><tr class="band-yellow"><td class="namec">Ben Rice</td><td>Yankees</td><td>1B</td><td>80</td></tr><tr class="band-yellow"><td class="namec">David Bednar</td><td>Yankees</td><td>RP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Anthony Volpe</td><td>Yankees</td><td>SS</td><td>79</td></tr><tr class="band-grey"><td class="namec">Luis Gil</td><td>Yankees</td><td>SP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Luke Weaver</td><td>Yankees</td><td>RP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Giancarlo Stanton</td><td>Yankees</td><td>DH</td><td>78</td></tr><tr class="band-grey"><td class="namec">Austin Wells</td><td>Yankees</td><td>C</td><td>78</td></tr><tr class="band-grey"><td class="namec">Amed Rosario</td><td>Yankees</td><td>3B</td><td>76</td></tr><tr class="band-grey"><td class="namec">Will Warren</td><td>Yankees</td><td>SP</td><td>75</td></tr><tr class="band-orange"><td class="namec">Jasson Domínguez</td><td>Yankees</td><td>LF</td><td>74</td></tr><tr class="band-orange"><td class="namec">Devin Williams</td><td>Yankees</td><td>CP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Camilo Doval</td><td>Yankees</td><td>RP</td><td>73</td></tr><tr class="band-orange"><td class="namec">José Caballero</td><td>Yankees</td><td>SS</td><td>72</td></tr><tr class="band-orange"><td class="namec">Ian Hamilton</td><td>Yankees</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Jake Bird</td><td>Yankees</td><td>CP</td><td>72</td></tr><tr class="band-orange"><td class="namec">J.C. Escarra</td><td>Yankees</td><td>C</td><td>72</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Tampa_Bay_Rays">
-          <header class="team-title"><h2>Tampa Bay Rays</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-yellow"><td class="namec">Junior Caminero</td><td>Rays</td><td>3B</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Yandy Díaz</td><td>Rays</td><td>1B</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Brandon Lowe</td><td>Rays</td><td>2B</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Drew Rasmussen</td><td>Rays</td><td>SP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Shane McClanahan</td><td>Rays</td><td>SP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Ha-Seong Kim</td><td>Rays</td><td>SS</td><td>79</td></tr><tr class="band-grey"><td class="namec">Chandler Simpson</td><td>Rays</td><td>CF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Jake Mangum</td><td>Rays</td><td>CF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Griffin Jax</td><td>Rays</td><td>RP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Garrett Cleavinger</td><td>Rays</td><td>RP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Bryan Baker</td><td>Rays</td><td>RP</td><td>77</td></tr><tr class="band-grey"><td class="namec">Jonathan Aranda</td><td>Rays</td><td>1B</td><td>77</td></tr><tr class="band-grey"><td class="namec">Ryan Pepiot</td><td>Rays</td><td>SP</td><td>77</td></tr><tr class="band-grey"><td class="namec">Stuart Fairchild</td><td>Rays</td><td>CF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Nick Fortes</td><td>Rays</td><td>C</td><td>76</td></tr><tr class="band-grey"><td class="namec">Kameron Misner</td><td>Rays</td><td>CF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Pete Fairbanks</td><td>Rays</td><td>CP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Josh Lowe</td><td>Rays</td><td>RF</td><td>75</td></tr><tr class="band-grey"><td class="namec">Jonny DeLuca</td><td>Rays</td><td>CF</td><td>75</td></tr><tr class="band-grey"><td class="namec">Kevin Kelly</td><td>Rays</td><td>RP</td><td>75</td></tr><tr class="band-grey"><td class="namec">Shane Baz</td><td>Rays</td><td>SP</td><td>75</td></tr><tr class="band-orange"><td class="namec">Edwin Uceta</td><td>Rays</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Taylor Walls</td><td>Rays</td><td>SS</td><td>74</td></tr><tr class="band-orange"><td class="namec">Adrian Houser</td><td>Rays</td><td>SP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Joe Boyle</td><td>Rays</td><td>SP</td><td>72</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Toronto_Blue_Jays">
-          <header class="team-title"><h2>Toronto Blue Jays</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Alejandro Kirk</td><td>Blue Jays</td><td>C</td><td>87</td></tr><tr class="band-blue"><td class="namec">Vladimir Guerrero Jr.</td><td>Blue Jays</td><td>1B</td><td>85</td></tr><tr class="band-yellow"><td class="namec">George Springer</td><td>Blue Jays</td><td>RF</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Yimi García</td><td>Blue Jays</td><td>CP</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Bo Bichette</td><td>Blue Jays</td><td>SS</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Andrés Giménez</td><td>Blue Jays</td><td>2B</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Ernie Clement</td><td>Blue Jays</td><td>2B</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Daulton Varsho</td><td>Blue Jays</td><td>CF</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Kevin Gausman</td><td>Blue Jays</td><td>SP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Addison Barger</td><td>Blue Jays</td><td>3B</td><td>80</td></tr><tr class="band-grey"><td class="namec">Jeff Hoffman</td><td>Blue Jays</td><td>CP</td><td>79</td></tr><tr class="band-grey"><td class="namec">Max Scherzer</td><td>Blue Jays</td><td>SP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Myles Straw</td><td>Blue Jays</td><td>CF</td><td>77</td></tr><tr class="band-grey"><td class="namec">Nathan Lukes</td><td>Blue Jays</td><td>RF</td><td>77</td></tr><tr class="band-grey"><td class="namec">Tyler Heineman</td><td>Blue Jays</td><td>C</td><td>76</td></tr><tr class="band-grey"><td class="namec">Seranthony Domínguez</td><td>Blue Jays</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Brendon Little</td><td>Blue Jays</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Louie Varland</td><td>Blue Jays</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">José Berríos</td><td>Blue Jays</td><td>SP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Chris Bassitt</td><td>Blue Jays</td><td>SP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Davis Schneider</td><td>Blue Jays</td><td>LF</td><td>75</td></tr><tr class="band-grey"><td class="namec">Yariel Rodriguez</td><td>Blue Jays</td><td>RP</td><td>75</td></tr><tr class="band-orange"><td class="namec">Tommy Nance</td><td>Blue Jays</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Eric Lauer</td><td>Blue Jays</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Nick Sandlin</td><td>Blue Jays</td><td>RP</td><td>73</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        </div>
-      </section>
-    
-
-      <section class="section">
-        <div class="div-title">AL Central</div>
-        <div class="grid">
-          
-        <section class="team" id="Cleveland_Guardians">
-          <header class="team-title"><h2>Cleveland Guardians</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">José Ramírez</td><td>Guardians</td><td>3B</td><td>92</td></tr><tr class="band-yellow"><td class="namec">Steven Kwan</td><td>Guardians</td><td>LF</td><td>84</td></tr><tr class="band-grey"><td class="namec">Cade Smith</td><td>Guardians</td><td>RP</td><td>77</td></tr><tr class="band-grey"><td class="namec">Carlos Santana</td><td>Guardians</td><td>1B</td><td>77</td></tr><tr class="band-grey"><td class="namec">Tanner Bibee</td><td>Guardians</td><td>SP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Kyle Manzardo</td><td>Guardians</td><td>1B</td><td>76</td></tr><tr class="band-grey"><td class="namec">Gavin Williams</td><td>Guardians</td><td>SP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Slade Cecconi</td><td>Guardians</td><td>SP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Lane Thomas</td><td>Guardians</td><td>CF</td><td>76</td></tr><tr class="band-grey"><td class="namec">David Fry</td><td>Guardians</td><td>3B</td><td>75</td></tr><tr class="band-orange"><td class="namec">Bo Naylor</td><td>Guardians</td><td>C</td><td>73</td></tr><tr class="band-orange"><td class="namec">Daniel Schneemann</td><td>Guardians</td><td>2B</td><td>73</td></tr><tr class="band-orange"><td class="namec">Angel Martinez</td><td>Guardians</td><td>CF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Joey Cantillo</td><td>Guardians</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Matt Festa</td><td>Guardians</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Gabriel Arias</td><td>Guardians</td><td>2B</td><td>70</td></tr><tr class="band-orange"><td class="namec">Jhonkensy Noel</td><td>Guardians</td><td>RF</td><td>70</td></tr><tr class="band-orange"><td class="namec">Brayan Rocchio</td><td>Guardians</td><td>SS</td><td>69</td></tr><tr class="band-orange"><td class="namec">Nolan Jones</td><td>Guardians</td><td>RF</td><td>69</td></tr><tr class="band-orange"><td class="namec">Austin Hedges</td><td>Guardians</td><td>C</td><td>69</td></tr><tr class="band-orange"><td class="namec">Hunter Gaddis</td><td>Guardians</td><td>CP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Logan Allen</td><td>Guardians</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Trevor Stephan</td><td>Guardians</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Erik Sabrowski</td><td>Guardians</td><td>RP</td><td>66</td></tr><tr class="band-orange"><td class="namec">Will Wilson</td><td>Guardians</td><td>SS</td><td>65</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Minnesota_Twins">
-          <header class="team-title"><h2>Minnesota Twins</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Byron Buxton</td><td>Twins</td><td>CF</td><td>91</td></tr><tr class="band-blue"><td class="namec">Joe Ryan</td><td>Twins</td><td>SP</td><td>87</td></tr><tr class="band-yellow"><td class="namec">Pablo López</td><td>Twins</td><td>SP</td><td>84</td></tr><tr class="band-grey"><td class="namec">Royce Lewis</td><td>Twins</td><td>3B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Ryan Jeffers</td><td>Twins</td><td>C</td><td>77</td></tr><tr class="band-grey"><td class="namec">Zebby Matthews</td><td>Twins</td><td>SP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Matt Wallner</td><td>Twins</td><td>RF</td><td>76</td></tr><tr class="band-orange"><td class="namec">David Festa</td><td>Twins</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Taj Bradley</td><td>Twins</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Kody Clemens</td><td>Twins</td><td>2B</td><td>73</td></tr><tr class="band-orange"><td class="namec">Trevor Larnach</td><td>Twins</td><td>LF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Christian Vázquez</td><td>Twins</td><td>C</td><td>72</td></tr><tr class="band-orange"><td class="namec">James Outman</td><td>Twins</td><td>CF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Brooks Lee</td><td>Twins</td><td>SS</td><td>71</td></tr><tr class="band-orange"><td class="namec">Michael Tonkin</td><td>Twins</td><td>RP</td><td>70</td></tr><tr class="band-orange"><td class="namec">Luke Keaschall</td><td>Twins</td><td>2B</td><td>70</td></tr><tr class="band-orange"><td class="namec">Bailey Ober</td><td>Twins</td><td>SP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Emmanuel Rodriguez</td><td>Twins</td><td>CF</td><td>69</td></tr><tr class="band-orange"><td class="namec">Cole Sands</td><td>Twins</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Simeon WoodsRichardson</td><td>Twins</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Jose Miranda</td><td>Twins</td><td>1B</td><td>68</td></tr><tr class="band-orange"><td class="namec">DaShawn Keirsey Jr.</td><td>Twins</td><td>CF</td><td>68</td></tr><tr class="band-orange"><td class="namec">Justin Topa</td><td>Twins</td><td>CP</td><td>67</td></tr><tr class="band-orange"><td class="namec">Alan Roden</td><td>Twins</td><td>LF</td><td>67</td></tr><tr class="band-orange"><td class="namec">Austin Martin</td><td>Twins</td><td>LF</td><td>66</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Detroit_Tigers">
-          <header class="team-title"><h2>Detroit Tigers</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Tarik Skubal</td><td>Tigers</td><td>SP</td><td>92</td></tr><tr class="band-yellow"><td class="namec">Dillon Dingler</td><td>Tigers</td><td>C</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Spencer Torkelson</td><td>Tigers</td><td>1B</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Kerry Carpenter</td><td>Tigers</td><td>RF</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Riley Greene</td><td>Tigers</td><td>LF</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Javier Báez</td><td>Tigers</td><td>SS</td><td>80</td></tr><tr class="band-yellow"><td class="namec">Gleyber Torres</td><td>Tigers</td><td>2B</td><td>80</td></tr><tr class="band-grey"><td class="namec">Zach McKinstry</td><td>Tigers</td><td>SS</td><td>79</td></tr><tr class="band-grey"><td class="namec">Wenceel Pérez</td><td>Tigers</td><td>CF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Casey Mize</td><td>Tigers</td><td>SP</td><td>77</td></tr><tr class="band-grey"><td class="namec">Will Vest</td><td>Tigers</td><td>CP</td><td>77</td></tr><tr class="band-grey"><td class="namec">Parker Meadows</td><td>Tigers</td><td>CF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Jack Flaherty</td><td>Tigers</td><td>SP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Andy Ibáñez</td><td>Tigers</td><td>3B</td><td>76</td></tr><tr class="band-grey"><td class="namec">Colt Keith</td><td>Tigers</td><td>2B</td><td>75</td></tr><tr class="band-orange"><td class="namec">Jake Rogers</td><td>Tigers</td><td>C</td><td>74</td></tr><tr class="band-orange"><td class="namec">Tyler Holton</td><td>Tigers</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Chris Paddack</td><td>Tigers</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Matt Vierling</td><td>Tigers</td><td>LF</td><td>74</td></tr><tr class="band-orange"><td class="namec">Trey Sweeney</td><td>Tigers</td><td>SS</td><td>72</td></tr><tr class="band-orange"><td class="namec">Charlie Morton</td><td>Tigers</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Brant Hurter</td><td>Tigers</td><td>RP</td><td>71</td></tr><tr class="band-orange"><td class="namec">Tommy Kahnle</td><td>Tigers</td><td>RP</td><td>70</td></tr><tr class="band-orange"><td class="namec">Rafael Montero</td><td>Tigers</td><td>RP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Jahmai Jones</td><td>Tigers</td><td>2B</td><td>68</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Kansas_City_Royals">
-          <header class="team-title"><h2>Kansas City Royals</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Bobby Witt Jr.</td><td>Royals</td><td>SS</td><td>91</td></tr><tr class="band-yellow"><td class="namec">Maikel Garcia</td><td>Royals</td><td>3B</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Cole Ragans</td><td>Royals</td><td>SP</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Kris Bubic</td><td>Royals</td><td>SP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Hunter Harvey</td><td>Royals</td><td>RP</td><td>79</td></tr><tr class="band-grey"><td class="namec">Salvador Perez</td><td>Royals</td><td>C</td><td>78</td></tr><tr class="band-grey"><td class="namec">Noah Cameron</td><td>Royals</td><td>SP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Vinnie Pasquantino</td><td>Royals</td><td>1B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Michael Wacha</td><td>Royals</td><td>SP</td><td>77</td></tr><tr class="band-grey"><td class="namec">Kyle Isbel</td><td>Royals</td><td>CF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Adam Frazier</td><td>Royals</td><td>2B</td><td>76</td></tr><tr class="band-grey"><td class="namec">Lucas Erceg</td><td>Royals</td><td>RP</td><td>75</td></tr><tr class="band-grey"><td class="namec">Jonathan India</td><td>Royals</td><td>2B</td><td>75</td></tr><tr class="band-orange"><td class="namec">Bailey Falter</td><td>Royals</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Seth Lugo</td><td>Royals</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Michael Lorenzen</td><td>Royals</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Taylor Clarke</td><td>Royals</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Dairon Blanco</td><td>Royals</td><td>LF</td><td>73</td></tr><tr class="band-orange"><td class="namec">Randal Grichuk</td><td>Royals</td><td>RF</td><td>73</td></tr><tr class="band-orange"><td class="namec">Mike Yastrzemski</td><td>Royals</td><td>RF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Nick Loftin</td><td>Royals</td><td>SS</td><td>72</td></tr><tr class="band-orange"><td class="namec">Stephen Kolek</td><td>Royals</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Jac Caglianone</td><td>Royals</td><td>1B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Ryan Bergert</td><td>Royals</td><td>SP</td><td>71</td></tr><tr class="band-orange"><td class="namec">John Rave</td><td>Royals</td><td>CF</td><td>71</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        </div>
-      </section>
-    
-
-      <section class="section">
-        <div class="div-title">AL West</div>
-        <div class="grid">
-          
-        <section class="team" id="Houston_Astros">
-          <header class="team-title"><h2>Houston Astros</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Jeremy Peña</td><td>Astros</td><td>SS</td><td>89</td></tr><tr class="band-blue"><td class="namec">Josh Hader</td><td>Astros</td><td>CP</td><td>88</td></tr><tr class="band-blue"><td class="namec">Hunter Brown</td><td>Astros</td><td>SP</td><td>87</td></tr><tr class="band-blue"><td class="namec">Yordan Alvarez</td><td>Astros</td><td>LF</td><td>85</td></tr><tr class="band-yellow"><td class="namec">Yainer Diaz</td><td>Astros</td><td>C</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Mauricio Dubón</td><td>Astros</td><td>CF</td><td>83</td></tr><tr class="band-yellow"><td class="namec">José Altuve</td><td>Astros</td><td>LF</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Jake Meyers</td><td>Astros</td><td>CF</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Carlos Correa</td><td>Astros</td><td>3B</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Isaac Paredes</td><td>Astros</td><td>3B</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Bryan Abreu</td><td>Astros</td><td>CP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Framber Valdez</td><td>Astros</td><td>SP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Victor Caratini</td><td>Astros</td><td>C</td><td>77</td></tr><tr class="band-grey"><td class="namec">Christian Walker</td><td>Astros</td><td>1B</td><td>76</td></tr><tr class="band-grey"><td class="namec">Bryan King</td><td>Astros</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Steven Okert</td><td>Astros</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Cam Smith</td><td>Astros</td><td>RF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Chas McCormick</td><td>Astros</td><td>CF</td><td>75</td></tr><tr class="band-grey"><td class="namec">Jesús Sánchez</td><td>Astros</td><td>RF</td><td>75</td></tr><tr class="band-orange"><td class="namec">Bennett Sousa</td><td>Astros</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Cristian Javier</td><td>Astros</td><td>SP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Ramon Urias</td><td>Astros</td><td>3B</td><td>73</td></tr><tr class="band-orange"><td class="namec">Spencer Arrighetti</td><td>Astros</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Kaleb Ort</td><td>Astros</td><td>RP</td><td>70</td></tr><tr class="band-orange"><td class="namec">Jacob Melton</td><td>Astros</td><td>LF</td><td>69</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Seattle_Mariners">
-          <header class="team-title"><h2>Seattle Mariners</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Cal Raleigh</td><td>Mariners</td><td>C</td><td>91</td></tr><tr class="band-blue"><td class="namec">Logan Gilbert</td><td>Mariners</td><td>SP</td><td>89</td></tr><tr class="band-blue"><td class="namec">Bryan Woo</td><td>Mariners</td><td>SP</td><td>87</td></tr><tr class="band-blue"><td class="namec">Julio Rodríguez</td><td>Mariners</td><td>CF</td><td>86</td></tr><tr class="band-blue"><td class="namec">Andrés Muñoz</td><td>Mariners</td><td>CP</td><td>85</td></tr><tr class="band-yellow"><td class="namec">Eugenio Suárez</td><td>Mariners</td><td>3B</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Gabe Speier</td><td>Mariners</td><td>RP</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Josh Naylor</td><td>Mariners</td><td>1B</td><td>83</td></tr><tr class="band-yellow"><td class="namec">George Kirby</td><td>Mariners</td><td>SP</td><td>83</td></tr><tr class="band-grey"><td class="namec">Randy Arozarena</td><td>Mariners</td><td>LF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Luis Castillo</td><td>Mariners</td><td>SP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Jorge Polanco</td><td>Mariners</td><td>2B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Dylan Moore</td><td>Mariners</td><td>2B</td><td>77</td></tr><tr class="band-grey"><td class="namec">J.P. Crawford</td><td>Mariners</td><td>SS</td><td>76</td></tr><tr class="band-grey"><td class="namec">Matt Brash</td><td>Mariners</td><td>RP</td><td>76</td></tr><tr class="band-orange"><td class="namec">Luke Raley</td><td>Mariners</td><td>1B</td><td>74</td></tr><tr class="band-orange"><td class="namec">Eduard Bazardo</td><td>Mariners</td><td>RP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Dominic Canzone</td><td>Mariners</td><td>LF</td><td>73</td></tr><tr class="band-orange"><td class="namec">Caleb Ferguson</td><td>Mariners</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Mitch Garver</td><td>Mariners</td><td>C</td><td>72</td></tr><tr class="band-orange"><td class="namec">Bryce Miller</td><td>Mariners</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Cole Young</td><td>Mariners</td><td>SS</td><td>71</td></tr><tr class="band-orange"><td class="namec">Miles Mastrobuoni</td><td>Mariners</td><td>2B</td><td>69</td></tr><tr class="band-orange"><td class="namec">Ben Williamson</td><td>Mariners</td><td>3B</td><td>69</td></tr><tr class="band-orange"><td class="namec">Donovan Solano</td><td>Mariners</td><td>1B</td><td>69</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Los_Angeles_Angels">
-          <header class="team-title"><h2>Los Angeles Angels</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Mike Trout</td><td>Angels</td><td>RF</td><td>87</td></tr><tr class="band-yellow"><td class="namec">Zach Neto</td><td>Angels</td><td>SS</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Logan O'Hoppe</td><td>Angels</td><td>C</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Taylor Ward</td><td>Angels</td><td>LF</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Kenley Jansen</td><td>Angels</td><td>CP</td><td>80</td></tr><tr class="band-yellow"><td class="namec">Jo Adell</td><td>Angels</td><td>CF</td><td>80</td></tr><tr class="band-grey"><td class="namec">Nolan Schanuel</td><td>Angels</td><td>1B</td><td>76</td></tr><tr class="band-grey"><td class="namec">Yoán Moncada</td><td>Angels</td><td>3B</td><td>75</td></tr><tr class="band-grey"><td class="namec">Luis García</td><td>Angels</td><td>RP</td><td>75</td></tr><tr class="band-orange"><td class="namec">Sam Bachman</td><td>Angels</td><td>RP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Jose Soriano</td><td>Angels</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Travis d'Arnaud</td><td>Angels</td><td>C</td><td>72</td></tr><tr class="band-orange"><td class="namec">Reid Detmers</td><td>Angels</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Yusei Kikuchi</td><td>Angels</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Luis Rengifo</td><td>Angels</td><td>2B</td><td>71</td></tr><tr class="band-orange"><td class="namec">Brock Burke</td><td>Angels</td><td>RP</td><td>70</td></tr><tr class="band-orange"><td class="namec">Carson Fulmer</td><td>Angels</td><td>RP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Chase Silseth</td><td>Angels</td><td>SP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Christian Moore</td><td>Angels</td><td>2B</td><td>69</td></tr><tr class="band-orange"><td class="namec">Kyren Paris</td><td>Angels</td><td>2B</td><td>69</td></tr><tr class="band-orange"><td class="namec">Ryan Zeferjahn</td><td>Angels</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Oswald Peraza</td><td>Angels</td><td>SS</td><td>68</td></tr><tr class="band-orange"><td class="namec">Matthew Lugo</td><td>Angels</td><td>LF</td><td>68</td></tr><tr class="band-orange"><td class="namec">Tyler Anderson</td><td>Angels</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Chris Taylor</td><td>Angels</td><td>LF</td><td>68</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Texas_Rangers">
-          <header class="team-title"><h2>Texas Rangers</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Jacob deGrom</td><td>Rangers</td><td>SP</td><td>87</td></tr><tr class="band-blue"><td class="namec">Nathan Eovaldi</td><td>Rangers</td><td>SP</td><td>87</td></tr><tr class="band-blue"><td class="namec">Wyatt Langford</td><td>Rangers</td><td>LF</td><td>85</td></tr><tr class="band-yellow"><td class="namec">Corey Seager</td><td>Rangers</td><td>SS</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Marcus Semien</td><td>Rangers</td><td>2B</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Merrill Kelly</td><td>Rangers</td><td>SP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Chris Martin</td><td>Rangers</td><td>RP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Danny Coulombe</td><td>Rangers</td><td>RP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Shawn Armstrong</td><td>Rangers</td><td>RP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Josh Jung</td><td>Rangers</td><td>3B</td><td>77</td></tr><tr class="band-grey"><td class="namec">Josh Smith</td><td>Rangers</td><td>SS</td><td>77</td></tr><tr class="band-grey"><td class="namec">Adolis García</td><td>Rangers</td><td>RF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Jonah Heim</td><td>Rangers</td><td>C</td><td>76</td></tr><tr class="band-grey"><td class="namec">Phil Maton</td><td>Rangers</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Evan Carter</td><td>Rangers</td><td>LF</td><td>75</td></tr><tr class="band-orange"><td class="namec">Kyle Higashioka</td><td>Rangers</td><td>C</td><td>74</td></tr><tr class="band-orange"><td class="namec">Jack Leiter</td><td>Rangers</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Jake Burger</td><td>Rangers</td><td>1B</td><td>74</td></tr><tr class="band-orange"><td class="namec">Rowdy Tellez</td><td>Rangers</td><td>1B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Ezequiel Duran</td><td>Rangers</td><td>2B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Patrick Corbin</td><td>Rangers</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Sam Haggerty</td><td>Rangers</td><td>LF</td><td>71</td></tr><tr class="band-orange"><td class="namec">Joc Pederson</td><td>Rangers</td><td>DH</td><td>70</td></tr><tr class="band-orange"><td class="namec">Cole Winn</td><td>Rangers</td><td>RP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Michael Helman</td><td>Rangers</td><td>SS</td><td>69</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Oakland_Athletics">
-          <header class="team-title"><h2>Oakland Athletics</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Shea Langeliers</td><td>Athletics</td><td>C</td><td>87</td></tr><tr class="band-blue"><td class="namec">Jacob Wilson</td><td>Athletics</td><td>SS</td><td>85</td></tr><tr class="band-yellow"><td class="namec">Brent Rooker</td><td>Athletics</td><td>RF</td><td>80</td></tr><tr class="band-yellow"><td class="namec">Nick Kurtz</td><td>Athletics</td><td>1B</td><td>80</td></tr><tr class="band-grey"><td class="namec">Tyler Soderstrom</td><td>Athletics</td><td>1B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Max Schuemann</td><td>Athletics</td><td>3B</td><td>78</td></tr><tr class="band-grey"><td class="namec">JJ Bleday</td><td>Athletics</td><td>CF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Lawrence Butler</td><td>Athletics</td><td>RF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Jeffrey Springs</td><td>Athletics</td><td>SP</td><td>75</td></tr><tr class="band-orange"><td class="namec">Jacob Lopez</td><td>Athletics</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Denzel Clarke</td><td>Athletics</td><td>CF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Zack Gelof</td><td>Athletics</td><td>2B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Mitch Spence</td><td>Athletics</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Luis Severino</td><td>Athletics</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Joey Estes</td><td>Athletics</td><td>SP</td><td>71</td></tr><tr class="band-orange"><td class="namec">Justin Sterner</td><td>Athletics</td><td>RP</td><td>70</td></tr><tr class="band-orange"><td class="namec">J.T. Ginn</td><td>Athletics</td><td>SP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Max Muncy</td><td>Athletics</td><td>SS</td><td>69</td></tr><tr class="band-orange"><td class="namec">Luis Urías</td><td>Athletics</td><td>2B</td><td>67</td></tr><tr class="band-orange"><td class="namec">Carlos Cortes</td><td>Athletics</td><td>RF</td><td>66</td></tr><tr class="band-orange"><td class="namec">Luis Morales</td><td>Athletics</td><td>SP</td><td>66</td></tr><tr class="band-orange"><td class="namec">Sean Newcomb</td><td>Athletics</td><td>CP</td><td>65</td></tr><tr class="band-orange"><td class="namec">Tyler Ferguson</td><td>Athletics</td><td>RP</td><td>65</td></tr><tr class="band-orange"><td class="namec">Osvaldo Bido</td><td>Athletics</td><td>RP</td><td>65</td></tr><tr class="band-orange"><td class="namec">Colby Thomas</td><td>Athletics</td><td>LF</td><td>65</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        </div>
-      </section>
-    
-
-      <section class="section">
-        <div class="div-title">NL East</div>
-        <div class="grid">
-          
-        <section class="team" id="Atlanta_Braves">
-          <header class="team-title"><h2>Atlanta Braves</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Ronald Acuña Jr.</td><td>Braves</td><td>RF</td><td>89</td></tr><tr class="band-blue"><td class="namec">Chris Sale</td><td>Braves</td><td>SP</td><td>86</td></tr><tr class="band-yellow"><td class="namec">Sean Murphy</td><td>Braves</td><td>C</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Drake Baldwin</td><td>Braves</td><td>C</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Spencer Schwellenbach</td><td>Braves</td><td>SP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Matt Olson</td><td>Braves</td><td>1B</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Reynaldo López</td><td>Braves</td><td>SP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Michael Harris II</td><td>Braves</td><td>CF</td><td>79</td></tr><tr class="band-grey"><td class="namec">Spencer Strider</td><td>Braves</td><td>SP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Austin Riley</td><td>Braves</td><td>3B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Dylan Lee</td><td>Braves</td><td>RP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Eli White</td><td>Braves</td><td>CF</td><td>77</td></tr><tr class="band-grey"><td class="namec">Marcell Ozuna</td><td>Braves</td><td>DH</td><td>76</td></tr><tr class="band-grey"><td class="namec">Jurickson Profar</td><td>Braves</td><td>LF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Pierce Johnson</td><td>Braves</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Raisel Iglesias</td><td>Braves</td><td>CP</td><td>75</td></tr><tr class="band-orange"><td class="namec">Nick Allen</td><td>Braves</td><td>SS</td><td>74</td></tr><tr class="band-orange"><td class="namec">Ozzie Albies</td><td>Braves</td><td>2B</td><td>74</td></tr><tr class="band-orange"><td class="namec">Jarred Kelenic</td><td>Braves</td><td>LF</td><td>71</td></tr><tr class="band-orange"><td class="namec">Erick Fedde</td><td>Braves</td><td>SP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Joey Wentz</td><td>Braves</td><td>SP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Hunter Stratton</td><td>Braves</td><td>RP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Daysbel Hernández</td><td>Braves</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Hurston Waldrep</td><td>Braves</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Wander Suero</td><td>Braves</td><td>RP</td><td>68</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Philadelphia_Phillies">
-          <header class="team-title"><h2>Philadelphia Phillies</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Zack Wheeler</td><td>Phillies</td><td>SP</td><td>91</td></tr><tr class="band-blue"><td class="namec">Trea Turner</td><td>Phillies</td><td>SS</td><td>87</td></tr><tr class="band-blue"><td class="namec">Bryce Harper</td><td>Phillies</td><td>1B</td><td>86</td></tr><tr class="band-blue"><td class="namec">Kyle Schwarber</td><td>Phillies</td><td>DH</td><td>86</td></tr><tr class="band-yellow"><td class="namec">Cristopher Sánchez</td><td>Phillies</td><td>SP</td><td>84</td></tr><tr class="band-yellow"><td class="namec">J.T. Realmuto</td><td>Phillies</td><td>C</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Harrison Bader</td><td>Phillies</td><td>CF</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Johan Rojas</td><td>Phillies</td><td>CF</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Bryson Stott</td><td>Phillies</td><td>2B</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Jhoan Duran</td><td>Phillies</td><td>CP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Edmundo Sosa</td><td>Phillies</td><td>2B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Alec Bohm</td><td>Phillies</td><td>3B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Brandon Marsh</td><td>Phillies</td><td>CF</td><td>77</td></tr><tr class="band-grey"><td class="namec">Ranger Suárez</td><td>Phillies</td><td>SP</td><td>77</td></tr><tr class="band-grey"><td class="namec">David Robertson</td><td>Phillies</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Jesús Luzardo</td><td>Phillies</td><td>SP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Tanner Banks</td><td>Phillies</td><td>RP</td><td>76</td></tr><tr class="band-orange"><td class="namec">Matt Strahm</td><td>Phillies</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Nick Castellanos</td><td>Phillies</td><td>RF</td><td>74</td></tr><tr class="band-orange"><td class="namec">Max Kepler</td><td>Phillies</td><td>LF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Matt Manning</td><td>Phillies</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Rafael Marchán</td><td>Phillies</td><td>C</td><td>72</td></tr><tr class="band-orange"><td class="namec">Taijuan Walker</td><td>Phillies</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Orion Kerkering</td><td>Phillies</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Otto Kemp</td><td>Phillies</td><td>3B</td><td>68</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="New_York_Mets">
-          <header class="team-title"><h2>New York Mets</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Juan Soto</td><td>Mets</td><td>RF</td><td>87</td></tr><tr class="band-blue"><td class="namec">Edwin Díaz</td><td>Mets</td><td>CP</td><td>86</td></tr><tr class="band-blue"><td class="namec">Francisco Lindor</td><td>Mets</td><td>SS</td><td>85</td></tr><tr class="band-blue"><td class="namec">Pete Alonso</td><td>Mets</td><td>1B</td><td>85</td></tr><tr class="band-yellow"><td class="namec">Cedric Mullins</td><td>Mets</td><td>CF</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Jeff McNeil</td><td>Mets</td><td>2B</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Francisco Alvarez</td><td>Mets</td><td>C</td><td>80</td></tr><tr class="band-yellow"><td class="namec">Brandon Nimmo</td><td>Mets</td><td>LF</td><td>80</td></tr><tr class="band-grey"><td class="namec">Tyrone Taylor</td><td>Mets</td><td>CF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Sean Manaea</td><td>Mets</td><td>SP</td><td>77</td></tr><tr class="band-grey"><td class="namec">Ryan Helsley</td><td>Mets</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Reed Garrett</td><td>Mets</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Luis Torrens</td><td>Mets</td><td>C</td><td>76</td></tr><tr class="band-grey"><td class="namec">Kodai Senga</td><td>Mets</td><td>SP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Starling Marte</td><td>Mets</td><td>RF</td><td>75</td></tr><tr class="band-orange"><td class="namec">Luisangel Acuña</td><td>Mets</td><td>2B</td><td>74</td></tr><tr class="band-orange"><td class="namec">Mark Vientos</td><td>Mets</td><td>3B</td><td>74</td></tr><tr class="band-orange"><td class="namec">Brooks Raley</td><td>Mets</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">David Peterson</td><td>Mets</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Tyler Rogers</td><td>Mets</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Gregory Soto</td><td>Mets</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Clay Holmes</td><td>Mets</td><td>SP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Brett Baty</td><td>Mets</td><td>3B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Ronny Mauricio</td><td>Mets</td><td>2B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Hayden Senger</td><td>Mets</td><td>C</td><td>68</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Miami_Marlins">
-          <header class="team-title"><h2>Miami Marlins</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-yellow"><td class="namec">Otto Lopez</td><td>Marlins</td><td>2B</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Eury Perez</td><td>Marlins</td><td>SP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Edward Cabrera</td><td>Marlins</td><td>SP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Dane Myers</td><td>Marlins</td><td>LF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Agustín Ramírez</td><td>Marlins</td><td>C</td><td>78</td></tr><tr class="band-grey"><td class="namec">Xavier Edwards</td><td>Marlins</td><td>2B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Kyle Stowers</td><td>Marlins</td><td>LF</td><td>77</td></tr><tr class="band-grey"><td class="namec">Ronny Henriquez</td><td>Marlins</td><td>CP</td><td>77</td></tr><tr class="band-grey"><td class="namec">Liam Hicks</td><td>Marlins</td><td>C</td><td>76</td></tr><tr class="band-orange"><td class="namec">Heriberto Hernandez</td><td>Marlins</td><td>LF</td><td>74</td></tr><tr class="band-orange"><td class="namec">Anthony Bender</td><td>Marlins</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Derek Hill</td><td>Marlins</td><td>CF</td><td>73</td></tr><tr class="band-orange"><td class="namec">Lake Bachar</td><td>Marlins</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Joey Wiemer</td><td>Marlins</td><td>RF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Javier Sanoja</td><td>Marlins</td><td>2B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Ryan Gusto</td><td>Marlins</td><td>SP</td><td>71</td></tr><tr class="band-orange"><td class="namec">Graham Pauley</td><td>Marlins</td><td>3B</td><td>71</td></tr><tr class="band-orange"><td class="namec">Eric Wagaman</td><td>Marlins</td><td>3B</td><td>68</td></tr><tr class="band-orange"><td class="namec">Cal Quantrill</td><td>Marlins</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Calvin Faucher</td><td>Marlins</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Connor Norby</td><td>Marlins</td><td>3B</td><td>68</td></tr><tr class="band-orange"><td class="namec">Janson Junk</td><td>Marlins</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Sandy Alcantara</td><td>Marlins</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Jakob Marsee</td><td>Marlins</td><td>RF</td><td>67</td></tr><tr class="band-orange"><td class="namec">Tyler Phillips</td><td>Marlins</td><td>RP</td><td>66</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Washington_Nationals">
-          <header class="team-title"><h2>Washington Nationals</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-yellow"><td class="namec">James Wood</td><td>Nationals</td><td>LF</td><td>81</td></tr><tr class="band-grey"><td class="namec">CJ Abrams</td><td>Nationals</td><td>SS</td><td>78</td></tr><tr class="band-grey"><td class="namec">Jacob Young</td><td>Nationals</td><td>CF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Luis García</td><td>Nationals</td><td>2B</td><td>78</td></tr><tr class="band-grey"><td class="namec">MacKenzie Gore</td><td>Nationals</td><td>SP</td><td>75</td></tr><tr class="band-grey"><td class="namec">Keibert Ruiz</td><td>Nationals</td><td>C</td><td>75</td></tr><tr class="band-orange"><td class="namec">Daylen Lile</td><td>Nationals</td><td>LF</td><td>73</td></tr><tr class="band-orange"><td class="namec">Josh Bell</td><td>Nationals</td><td>1B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Nathaniel Lowe</td><td>Nationals</td><td>1B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Drew Millas</td><td>Nationals</td><td>C</td><td>72</td></tr><tr class="band-orange"><td class="namec">Nasim Nuñez</td><td>Nationals</td><td>SS</td><td>71</td></tr><tr class="band-orange"><td class="namec">Robert Hassell III</td><td>Nationals</td><td>CF</td><td>71</td></tr><tr class="band-orange"><td class="namec">Brady House</td><td>Nationals</td><td>3B</td><td>71</td></tr><tr class="band-orange"><td class="namec">Andrés Chaparro</td><td>Nationals</td><td>1B</td><td>69</td></tr><tr class="band-orange"><td class="namec">Paul DeJong</td><td>Nationals</td><td>SS</td><td>69</td></tr><tr class="band-orange"><td class="namec">Jake Irvin</td><td>Nationals</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Darren Baker</td><td>Nationals</td><td>2B</td><td>68</td></tr><tr class="band-orange"><td class="namec">Jose A. Ferrer</td><td>Nationals</td><td>CP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Riley Adams</td><td>Nationals</td><td>C</td><td>68</td></tr><tr class="band-orange"><td class="namec">Cole Henry</td><td>Nationals</td><td>RP</td><td>67</td></tr><tr class="band-orange"><td class="namec">Cade Cavalli</td><td>Nationals</td><td>SP</td><td>66</td></tr><tr class="band-orange"><td class="namec">José Tena</td><td>Nationals</td><td>3B</td><td>66</td></tr><tr class="band-orange"><td class="namec">Trey Lipscomb</td><td>Nationals</td><td>3B</td><td>66</td></tr><tr class="band-orange"><td class="namec">Mitchell Parker</td><td>Nationals</td><td>SP</td><td>65</td></tr><tr class="band-white"><td class="namec">Jackson Cluff</td><td>Nationals</td><td>3B</td><td>64</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        </div>
-      </section>
-    
-
-      <section class="section">
-        <div class="div-title">NL Central</div>
-        <div class="grid">
-          
-        <section class="team" id="Milwaukee_Brewers">
-          <header class="team-title"><h2>Milwaukee Brewers</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Brice Turang</td><td>Brewers</td><td>2B</td><td>85</td></tr><tr class="band-yellow"><td class="namec">Jackson Chourio</td><td>Brewers</td><td>LF</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Sal Frelick</td><td>Brewers</td><td>RF</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Brandon Woodruff</td><td>Brewers</td><td>SP</td><td>83</td></tr><tr class="band-yellow"><td class="namec">William Contreras</td><td>Brewers</td><td>C</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Christian Yelich</td><td>Brewers</td><td>LF</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Freddy Peralta</td><td>Brewers</td><td>SP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Isaac Collins</td><td>Brewers</td><td>CF</td><td>81</td></tr><tr class="band-grey"><td class="namec">Shelby Miller</td><td>Brewers</td><td>RP</td><td>79</td></tr><tr class="band-grey"><td class="namec">Trevor Megill</td><td>Brewers</td><td>CP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Blake Perkins</td><td>Brewers</td><td>CF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Abner Uribe</td><td>Brewers</td><td>RP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Rhys Hoskins</td><td>Brewers</td><td>1B</td><td>77</td></tr><tr class="band-grey"><td class="namec">Caleb Durbin</td><td>Brewers</td><td>3B</td><td>76</td></tr><tr class="band-grey"><td class="namec">Joseph Ortiz</td><td>Brewers</td><td>SS</td><td>76</td></tr><tr class="band-grey"><td class="namec">Aaron Ashby</td><td>Brewers</td><td>RP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Nick Mears</td><td>Brewers</td><td>RP</td><td>76</td></tr><tr class="band-orange"><td class="namec">Danny Jansen</td><td>Brewers</td><td>C</td><td>73</td></tr><tr class="band-orange"><td class="namec">Grant Anderson</td><td>Brewers</td><td>RP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Brandon Lockridge</td><td>Brewers</td><td>CF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Quinn Priester</td><td>Brewers</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Andrew Vaughn</td><td>Brewers</td><td>1B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Jacob Misiorowski</td><td>Brewers</td><td>SP</td><td>71</td></tr><tr class="band-orange"><td class="namec">Jake Bauers</td><td>Brewers</td><td>LF</td><td>71</td></tr><tr class="band-orange"><td class="namec">José Quintana</td><td>Brewers</td><td>SP</td><td>71</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Chicago_Cubs">
-          <header class="team-title"><h2>Chicago Cubs</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Pete Crow-Armstrong</td><td>Cubs</td><td>CF</td><td>92</td></tr><tr class="band-blue"><td class="namec">Nico Hoerner</td><td>Cubs</td><td>2B</td><td>86</td></tr><tr class="band-blue"><td class="namec">Seiya Suzuki</td><td>Cubs</td><td>RF</td><td>85</td></tr><tr class="band-blue"><td class="namec">Kyle Tucker</td><td>Cubs</td><td>RF</td><td>85</td></tr><tr class="band-yellow"><td class="namec">Carson Kelly</td><td>Cubs</td><td>C</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Dansby Swanson</td><td>Cubs</td><td>SS</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Shota Imanaga</td><td>Cubs</td><td>SP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Michael Busch</td><td>Cubs</td><td>1B</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Justin Steele</td><td>Cubs</td><td>SP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Ian Happ</td><td>Cubs</td><td>LF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Jameson Taillon</td><td>Cubs</td><td>SP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Matthew Boyd</td><td>Cubs</td><td>SP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Willi Castro</td><td>Cubs</td><td>SS</td><td>78</td></tr><tr class="band-grey"><td class="namec">Mike Soroka</td><td>Cubs</td><td>SP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Miguel Amaya</td><td>Cubs</td><td>C</td><td>76</td></tr><tr class="band-grey"><td class="namec">Caleb Thielbar</td><td>Cubs</td><td>RP</td><td>76</td></tr><tr class="band-orange"><td class="namec">Matt Shaw</td><td>Cubs</td><td>3B</td><td>74</td></tr><tr class="band-orange"><td class="namec">Drew Pomeranz</td><td>Cubs</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Cade Horton</td><td>Cubs</td><td>SP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Daniel Palencia</td><td>Cubs</td><td>CP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Brad Keller</td><td>Cubs</td><td>RP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Javier Assad</td><td>Cubs</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Reese McGuire</td><td>Cubs</td><td>C</td><td>72</td></tr><tr class="band-orange"><td class="namec">Ryan Brasier</td><td>Cubs</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Luke Little</td><td>Cubs</td><td>CP</td><td>71</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="St_Louis_Cardinals">
-          <header class="team-title"><h2>St. Louis Cardinals</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-yellow"><td class="namec">Masyn Winn</td><td>Cardinals</td><td>SS</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Sonny Gray</td><td>Cardinals</td><td>SP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Willson Contreras</td><td>Cardinals</td><td>1B</td><td>80</td></tr><tr class="band-yellow"><td class="namec">Brendan Donovan</td><td>Cardinals</td><td>2B</td><td>80</td></tr><tr class="band-grey"><td class="namec">Iván Herrera</td><td>Cardinals</td><td>C</td><td>79</td></tr><tr class="band-grey"><td class="namec">Nolan Arenado</td><td>Cardinals</td><td>3B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Victor Scott II</td><td>Cardinals</td><td>CF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Yohel Pozo</td><td>Cardinals</td><td>C</td><td>76</td></tr><tr class="band-grey"><td class="namec">Alec Burleson</td><td>Cardinals</td><td>RF</td><td>75</td></tr><tr class="band-orange"><td class="namec">Kyle Leahy</td><td>Cardinals</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Lars Nootbaar</td><td>Cardinals</td><td>LF</td><td>74</td></tr><tr class="band-orange"><td class="namec">Pedro Pagés</td><td>Cardinals</td><td>C</td><td>74</td></tr><tr class="band-orange"><td class="namec">Matthew Liberatore</td><td>Cardinals</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Miles Mikolas</td><td>Cardinals</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">JoJo Romero</td><td>Cardinals</td><td>CP</td><td>71</td></tr><tr class="band-orange"><td class="namec">Michael McGreevy</td><td>Cardinals</td><td>SP</td><td>71</td></tr><tr class="band-orange"><td class="namec">Garrett Hampson</td><td>Cardinals</td><td>SS</td><td>71</td></tr><tr class="band-orange"><td class="namec">Michael Siani</td><td>Cardinals</td><td>CF</td><td>70</td></tr><tr class="band-orange"><td class="namec">Andre Pallante</td><td>Cardinals</td><td>SP</td><td>70</td></tr><tr class="band-orange"><td class="namec">Nolan Gorman</td><td>Cardinals</td><td>2B</td><td>70</td></tr><tr class="band-orange"><td class="namec">Jordan Walker</td><td>Cardinals</td><td>RF</td><td>69</td></tr><tr class="band-orange"><td class="namec">Tink Hence</td><td>Cardinals</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Riley O'Brien</td><td>Cardinals</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Matt Svanson</td><td>Cardinals</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Mike Antico</td><td>Cardinals</td><td>CF</td><td>67</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Cincinnati_Reds">
-          <header class="team-title"><h2>Cincinnati Reds</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Elly De La Cruz</td><td>Reds</td><td>SS</td><td>87</td></tr><tr class="band-blue"><td class="namec">Hunter Greene</td><td>Reds</td><td>SP</td><td>87</td></tr><tr class="band-yellow"><td class="namec">Emilio Pagán</td><td>Reds</td><td>CP</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Miguel Andujar</td><td>Reds</td><td>LF</td><td>80</td></tr><tr class="band-yellow"><td class="namec">Nick Lodolo</td><td>Reds</td><td>SP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Andrew Abbott</td><td>Reds</td><td>SP</td><td>79</td></tr><tr class="band-grey"><td class="namec">TJ Friedl</td><td>Reds</td><td>CF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Zack Littell</td><td>Reds</td><td>SP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Chase Burns</td><td>Reds</td><td>SP</td><td>77</td></tr><tr class="band-grey"><td class="namec">Tyler Stephenson</td><td>Reds</td><td>C</td><td>77</td></tr><tr class="band-grey"><td class="namec">Jose Trevino</td><td>Reds</td><td>C</td><td>76</td></tr><tr class="band-grey"><td class="namec">Austin Hays</td><td>Reds</td><td>LF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Ke'Bryan Hayes</td><td>Reds</td><td>3B</td><td>76</td></tr><tr class="band-grey"><td class="namec">Spencer Steer</td><td>Reds</td><td>1B</td><td>76</td></tr><tr class="band-grey"><td class="namec">Jake Fraley</td><td>Reds</td><td>LF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Santiago Espinal</td><td>Reds</td><td>3B</td><td>75</td></tr><tr class="band-orange"><td class="namec">Will Benson</td><td>Reds</td><td>RF</td><td>73</td></tr><tr class="band-orange"><td class="namec">Matt McLain</td><td>Reds</td><td>2B</td><td>73</td></tr><tr class="band-orange"><td class="namec">Rece Hinds</td><td>Reds</td><td>RF</td><td>73</td></tr><tr class="band-orange"><td class="namec">Noelvi Marte</td><td>Reds</td><td>3B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Tony Santillan</td><td>Reds</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Scott Barlow</td><td>Reds</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Brady Singer</td><td>Reds</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Gavin Lux</td><td>Reds</td><td>LF</td><td>71</td></tr><tr class="band-orange"><td class="namec">Christian Encarnacion</td><td>Reds</td><td>1B</td><td>71</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Pittsburgh_Pirates">
-          <header class="team-title"><h2>Pittsburgh Pirates</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Paul Skenes</td><td>Pirates</td><td>SP</td><td>88</td></tr><tr class="band-yellow"><td class="namec">Oneil Cruz</td><td>Pirates</td><td>CF</td><td>82</td></tr><tr class="band-grey"><td class="namec">Dennis Santana</td><td>Pirates</td><td>CP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Nick Gonzales</td><td>Pirates</td><td>2B</td><td>77</td></tr><tr class="band-grey"><td class="namec">Mitch Keller</td><td>Pirates</td><td>SP</td><td>76</td></tr><tr class="band-grey"><td class="namec">Isiah Kiner-Falefa</td><td>Pirates</td><td>SS</td><td>76</td></tr><tr class="band-grey"><td class="namec">Bryan Reynolds</td><td>Pirates</td><td>RF</td><td>75</td></tr><tr class="band-orange"><td class="namec">Dauri Moreta</td><td>Pirates</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Joey Bart</td><td>Pirates</td><td>C</td><td>74</td></tr><tr class="band-orange"><td class="namec">Johan Oviedo</td><td>Pirates</td><td>SP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Jared Triolo</td><td>Pirates</td><td>2B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Tommy Pham</td><td>Pirates</td><td>LF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Henry Davis</td><td>Pirates</td><td>C</td><td>72</td></tr><tr class="band-orange"><td class="namec">Andrew McCutchen</td><td>Pirates</td><td>RF</td><td>71</td></tr><tr class="band-orange"><td class="namec">Mike Burrows</td><td>Pirates</td><td>SP</td><td>71</td></tr><tr class="band-orange"><td class="namec">Liover Peguero</td><td>Pirates</td><td>SS</td><td>71</td></tr><tr class="band-orange"><td class="namec">Jack Suwinski</td><td>Pirates</td><td>CF</td><td>70</td></tr><tr class="band-orange"><td class="namec">Andrew Heaney</td><td>Pirates</td><td>SP</td><td>69</td></tr><tr class="band-orange"><td class="namec">Spencer Horwitz</td><td>Pirates</td><td>1B</td><td>68</td></tr><tr class="band-orange"><td class="namec">Ji-Hwan Bae</td><td>Pirates</td><td>2B</td><td>68</td></tr><tr class="band-orange"><td class="namec">Nick Yorke</td><td>Pirates</td><td>LF</td><td>68</td></tr><tr class="band-orange"><td class="namec">Carmen Mlodzinski</td><td>Pirates</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Braxton Ashcraft</td><td>Pirates</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Ryan Borucki</td><td>Pirates</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Isaac Mattson</td><td>Pirates</td><td>RP</td><td>67</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        </div>
-      </section>
-    
-
-      <section class="section">
-        <div class="div-title">NL West</div>
-        <div class="grid">
-          
-        <section class="team" id="Los_Angeles_Dodgers">
-          <header class="team-title"><h2>Los Angeles Dodgers</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Shohei Ohtani</td><td>Dodgers</td><td>SP</td><td>91</td></tr><tr class="band-blue"><td class="namec">Will Smith</td><td>Dodgers</td><td>C</td><td>88</td></tr><tr class="band-blue"><td class="namec">Freddie Freeman</td><td>Dodgers</td><td>1B</td><td>85</td></tr><tr class="band-blue"><td class="namec">Andy Pages</td><td>Dodgers</td><td>CF</td><td>85</td></tr><tr class="band-blue"><td class="namec">Mookie Betts</td><td>Dodgers</td><td>SS</td><td>85</td></tr><tr class="band-blue"><td class="namec">Tyler Glasnow</td><td>Dodgers</td><td>SP</td><td>85</td></tr><tr class="band-blue"><td class="namec">Blake Snell</td><td>Dodgers</td><td>SP</td><td>85</td></tr><tr class="band-yellow"><td class="namec">Yoshinobu Yamamoto</td><td>Dodgers</td><td>SP</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Max Muncy</td><td>Dodgers</td><td>3B</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Tommy Edman</td><td>Dodgers</td><td>2B</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Teoscar Hernández</td><td>Dodgers</td><td>LF</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Alex Vesia</td><td>Dodgers</td><td>RP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Kirby Yates</td><td>Dodgers</td><td>RP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Hyeseong Kim</td><td>Dodgers</td><td>2B</td><td>79</td></tr><tr class="band-grey"><td class="namec">Tanner Scott</td><td>Dodgers</td><td>CP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Brock Stewart</td><td>Dodgers</td><td>RP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Miguel Rojas</td><td>Dodgers</td><td>SS</td><td>78</td></tr><tr class="band-grey"><td class="namec">Alex Call</td><td>Dodgers</td><td>RF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Blake Treinen</td><td>Dodgers</td><td>CP</td><td>76</td></tr><tr class="band-orange"><td class="namec">Enrique Hernández</td><td>Dodgers</td><td>3B</td><td>74</td></tr><tr class="band-orange"><td class="namec">Landon Knack</td><td>Dodgers</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Justin Wrobleski</td><td>Dodgers</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Clayton Kershaw</td><td>Dodgers</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Bobby Miller</td><td>Dodgers</td><td>SP</td><td>71</td></tr><tr class="band-orange"><td class="namec">Esteury Ruiz</td><td>Dodgers</td><td>CF</td><td>71</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="San_Diego_Padres">
-          <header class="team-title"><h2>San Diego Padres</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Fernando Tatis Jr.</td><td>Padres</td><td>RF</td><td>88</td></tr><tr class="band-blue"><td class="namec">Mason Miller</td><td>Padres</td><td>RP</td><td>86</td></tr><tr class="band-blue"><td class="namec">Manny Machado</td><td>Padres</td><td>3B</td><td>85</td></tr><tr class="band-blue"><td class="namec">Nick Pivetta</td><td>Padres</td><td>SP</td><td>85</td></tr><tr class="band-yellow"><td class="namec">Jackson Merrill</td><td>Padres</td><td>CF</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Ramon Laureano</td><td>Padres</td><td>LF</td><td>83</td></tr><tr class="band-yellow"><td class="namec">Michael King</td><td>Padres</td><td>SP</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Adrian Morejon</td><td>Padres</td><td>RP</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Jeremiah Estrada</td><td>Padres</td><td>RP</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Xander Bogaerts</td><td>Padres</td><td>SS</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Freddy Fermin</td><td>Padres</td><td>C</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Ryan O'Hearn</td><td>Padres</td><td>1B</td><td>81</td></tr><tr class="band-grey"><td class="namec">Dylan Cease</td><td>Padres</td><td>SP</td><td>79</td></tr><tr class="band-grey"><td class="namec">Luis Arraez</td><td>Padres</td><td>1B</td><td>78</td></tr><tr class="band-grey"><td class="namec">Robert Suarez</td><td>Padres</td><td>CP</td><td>78</td></tr><tr class="band-grey"><td class="namec">Yu Darvish</td><td>Padres</td><td>SP</td><td>77</td></tr><tr class="band-grey"><td class="namec">Jake Cronenworth</td><td>Padres</td><td>2B</td><td>77</td></tr><tr class="band-grey"><td class="namec">Nestor Cortes Jr.</td><td>Padres</td><td>SP</td><td>75</td></tr><tr class="band-orange"><td class="namec">Jason Adam</td><td>Padres</td><td>RP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Luis Campusano</td><td>Padres</td><td>C</td><td>74</td></tr><tr class="band-orange"><td class="namec">JP Sears</td><td>Padres</td><td>SP</td><td>74</td></tr><tr class="band-orange"><td class="namec">Matt Waldron</td><td>Padres</td><td>SP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Gavin Sheets</td><td>Padres</td><td>LF</td><td>72</td></tr><tr class="band-orange"><td class="namec">José Iglesias</td><td>Padres</td><td>2B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Elias Díaz</td><td>Padres</td><td>C</td><td>71</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Arizona_Diamondbacks">
-          <header class="team-title"><h2>Arizona Diamondbacks</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Ketel Marte</td><td>Diamondbacks</td><td>2B</td><td>91</td></tr><tr class="band-blue"><td class="namec">Corbin Carroll</td><td>Diamondbacks</td><td>RF</td><td>87</td></tr><tr class="band-yellow"><td class="namec">Geraldo Perdomo</td><td>Diamondbacks</td><td>SS</td><td>84</td></tr><tr class="band-yellow"><td class="namec">Gabriel Moreno</td><td>Diamondbacks</td><td>C</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Corbin Burnes</td><td>Diamondbacks</td><td>SP</td><td>80</td></tr><tr class="band-yellow"><td class="namec">Ryne Nelson</td><td>Diamondbacks</td><td>SP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Lourdes Gurriel Jr.</td><td>Diamondbacks</td><td>LF</td><td>79</td></tr><tr class="band-grey"><td class="namec">Jake McCarthy</td><td>Diamondbacks</td><td>CF</td><td>76</td></tr><tr class="band-grey"><td class="namec">Anthony DeSclafani</td><td>Diamondbacks</td><td>SP</td><td>75</td></tr><tr class="band-orange"><td class="namec">Brandon Pfaadt</td><td>Diamondbacks</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Zac Gallen</td><td>Diamondbacks</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Alek Thomas</td><td>Diamondbacks</td><td>CF</td><td>72</td></tr><tr class="band-orange"><td class="namec">Ildemaro Vargas</td><td>Diamondbacks</td><td>3B</td><td>72</td></tr><tr class="band-orange"><td class="namec">James McCann</td><td>Diamondbacks</td><td>C</td><td>72</td></tr><tr class="band-orange"><td class="namec">Adrian Del Castillo</td><td>Diamondbacks</td><td>C</td><td>71</td></tr><tr class="band-orange"><td class="namec">Jordan Lawlar</td><td>Diamondbacks</td><td>SS</td><td>70</td></tr><tr class="band-orange"><td class="namec">Pavin Smith</td><td>Diamondbacks</td><td>RF</td><td>68</td></tr><tr class="band-orange"><td class="namec">Kyle Nelson</td><td>Diamondbacks</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Blaze Alexander</td><td>Diamondbacks</td><td>SS</td><td>68</td></tr><tr class="band-orange"><td class="namec">Jalen Beeks</td><td>Diamondbacks</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Tim Tawa</td><td>Diamondbacks</td><td>2B</td><td>68</td></tr><tr class="band-orange"><td class="namec">Yilber Diaz</td><td>Diamondbacks</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">John Curtiss</td><td>Diamondbacks</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Eduardo Rodriguez</td><td>Diamondbacks</td><td>SP</td><td>67</td></tr><tr class="band-orange"><td class="namec">Connor Kaiser</td><td>Diamondbacks</td><td>2B</td><td>66</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="San_Francisco_Giants">
-          <header class="team-title"><h2>San Francisco Giants</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-blue"><td class="namec">Randy Rodriguez</td><td>Giants</td><td>CP</td><td>86</td></tr><tr class="band-yellow"><td class="namec">Logan Webb</td><td>Giants</td><td>SP</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Matt Chapman</td><td>Giants</td><td>3B</td><td>82</td></tr><tr class="band-yellow"><td class="namec">Rafael Devers</td><td>Giants</td><td>1B</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Robbie Ray</td><td>Giants</td><td>SP</td><td>80</td></tr><tr class="band-grey"><td class="namec">Jung Hoo Lee</td><td>Giants</td><td>CF</td><td>79</td></tr><tr class="band-grey"><td class="namec">Willy Adames</td><td>Giants</td><td>SS</td><td>78</td></tr><tr class="band-grey"><td class="namec">Wilmer Flores</td><td>Giants</td><td>1B</td><td>76</td></tr><tr class="band-grey"><td class="namec">Heliot Ramos</td><td>Giants</td><td>LF</td><td>76</td></tr><tr class="band-orange"><td class="namec">Tyler Fitzgerald</td><td>Giants</td><td>2B</td><td>74</td></tr><tr class="band-orange"><td class="namec">Hayden Birdsong</td><td>Giants</td><td>RP</td><td>73</td></tr><tr class="band-orange"><td class="namec">Ryan Walker</td><td>Giants</td><td>RP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Landen Roupp</td><td>Giants</td><td>SP</td><td>72</td></tr><tr class="band-orange"><td class="namec">Casey Schmitt</td><td>Giants</td><td>2B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Brett Wisely</td><td>Giants</td><td>2B</td><td>72</td></tr><tr class="band-orange"><td class="namec">Patrick Bailey</td><td>Giants</td><td>C</td><td>72</td></tr><tr class="band-orange"><td class="namec">Luis Matos</td><td>Giants</td><td>CF</td><td>71</td></tr><tr class="band-orange"><td class="namec">Drew Gilbert</td><td>Giants</td><td>RF</td><td>71</td></tr><tr class="band-orange"><td class="namec">Joey Lucchesi</td><td>Giants</td><td>RP</td><td>70</td></tr><tr class="band-orange"><td class="namec">Dominic Smith</td><td>Giants</td><td>1B</td><td>69</td></tr><tr class="band-orange"><td class="namec">Christian Koss</td><td>Giants</td><td>2B</td><td>69</td></tr><tr class="band-orange"><td class="namec">Justin Verlander</td><td>Giants</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Jerar Encarnacion</td><td>Giants</td><td>LF</td><td>68</td></tr><tr class="band-orange"><td class="namec">Spencer Bivens</td><td>Giants</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Carson Whisenhunt</td><td>Giants</td><td>SP</td><td>67</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        <section class="team" id="Colorado_Rockies">
-          <header class="team-title"><h2>Colorado Rockies</h2><span class="count">25 jugadores</span></header>
-          <table class="roster">
-            <colgroup><col class="name"><col class="team"><col class="pos"><col class="ovr"></colgroup>
-            <thead><tr><th>name</th><th>team</th><th>position</th><th>overall</th></tr></thead>
-            <tbody>
-              <tr class="band-yellow"><td class="namec">Hunter Goodman</td><td>Rockies</td><td>C</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Brenton Doyle</td><td>Rockies</td><td>CF</td><td>81</td></tr><tr class="band-yellow"><td class="namec">Ezequiel Tovar</td><td>Rockies</td><td>SS</td><td>81</td></tr><tr class="band-grey"><td class="namec">Mickey Moniak</td><td>Rockies</td><td>RF</td><td>78</td></tr><tr class="band-grey"><td class="namec">Tyler Freeman</td><td>Rockies</td><td>CF</td><td>77</td></tr><tr class="band-grey"><td class="namec">Jordan Beck</td><td>Rockies</td><td>LF</td><td>76</td></tr><tr class="band-orange"><td class="namec">Warming Bernabel</td><td>Rockies</td><td>3B</td><td>70</td></tr><tr class="band-orange"><td class="namec">Kyle Farmer</td><td>Rockies</td><td>SS</td><td>70</td></tr><tr class="band-orange"><td class="namec">Yanquiel Fernández</td><td>Rockies</td><td>LF</td><td>68</td></tr><tr class="band-orange"><td class="namec">Orlando Arcia</td><td>Rockies</td><td>SS</td><td>68</td></tr><tr class="band-orange"><td class="namec">Ryan Feltner</td><td>Rockies</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Juan Mejia</td><td>Rockies</td><td>RP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Germán Márquez</td><td>Rockies</td><td>SP</td><td>68</td></tr><tr class="band-orange"><td class="namec">Chase Dollander</td><td>Rockies</td><td>SP</td><td>67</td></tr><tr class="band-orange"><td class="namec">Braxton Fulford</td><td>Rockies</td><td>C</td><td>67</td></tr><tr class="band-orange"><td class="namec">Jimmy Herget</td><td>Rockies</td><td>RP</td><td>67</td></tr><tr class="band-orange"><td class="namec">Carson Palmquist</td><td>Rockies</td><td>SP</td><td>66</td></tr><tr class="band-orange"><td class="namec">Drew Romo</td><td>Rockies</td><td>C</td><td>66</td></tr><tr class="band-orange"><td class="namec">Michael Toglia</td><td>Rockies</td><td>1B</td><td>66</td></tr><tr class="band-orange"><td class="namec">Aaron Schunk</td><td>Rockies</td><td>3B</td><td>66</td></tr><tr class="band-orange"><td class="namec">Kyle Freeland</td><td>Rockies</td><td>SP</td><td>65</td></tr><tr class="band-white"><td class="namec">Angel Chivilli</td><td>Rockies</td><td>RP</td><td>64</td></tr><tr class="band-white"><td class="namec">Zac Veen</td><td>Rockies</td><td>RF</td><td>64</td></tr><tr class="band-white"><td class="namec">Ryan Ritter</td><td>Rockies</td><td>SS</td><td>63</td></tr><tr class="band-white"><td class="namec">Kyle Karros</td><td>Rockies</td><td>3B</td><td>63</td></tr>
-            </tbody>
-          </table>
-        </section>
-        
-        </div>
-      </section>
-    
-<script>
-const q = document.getElementById('q');
-q.addEventListener('input', () => {
-  const term = q.value.trim().toLowerCase();
-  document.querySelectorAll('table.roster tbody tr').forEach(tr => {
-    const text = tr.textContent.toLowerCase();
-    tr.style.display = (!term || text.includes(term)) ? '' : 'none';
-  });
-});
-</script>
-
+  <div id="grid" class="grid" aria-live="polite"></div>
 </main>
-<div class="footer">Todas las tablas usan el mismo ancho de columnas calculado globalmente para evitar truncados.</div>
+
+<footer>Hecho para tu liga personalizada de MLB The Show — disponibilidad definida por ti.</footer>
+
+<script>
+  // --- Datos base (los 21 equipos disponibles) ---
+  const TEAMS = [
+    {name:"Astros", city:"Houston", league:"AL"},
+    {name:"Orioles", city:"Baltimore", league:"AL"},
+    {name:"Giants", city:"San Francisco", league:"NL"},
+    {name:"Mets", city:"New York", league:"NL"},
+    {name:"Angels", city:"Los Angeles", league:"AL"},
+    {name:"Rangers", city:"Texas", league:"AL"},
+    {name:"Brewers", city:"Milwaukee", league:"NL"},
+    {name:"Braves", city:"Atlanta", league:"NL"},
+    {name:"Tigers", city:"Detroit", league:"AL"},
+    {name:"Athletics", city:"Oakland", league:"AL"},
+    {name:"Blue Jays", city:"Toronto", league:"AL"},
+    {name:"Royals", city:"Kansas City", league:"AL"},
+    {name:"Cardinals", city:"St. Louis", league:"NL"},
+    {name:"Rockies", city:"Colorado", league:"NL"},
+    {name:"Pirates", city:"Pittsburgh", league:"NL"},
+    {name:"Reds", city:"Cincinnati", league:"NL"},
+    {name:"Marlins", city:"Miami", league:"NL"},
+    {name:"Guardians", city:"Cleveland", league:"AL"},
+    {name:"Rays", city:"Tampa Bay", league:"AL"},
+    {name:"Nationals", city:"Washington", league:"NL"},
+    {name:"White Sox", city:"Chicago", league:"AL"}
+  ];
+
+  const grid = document.getElementById('grid');
+  const q = document.getElementById('q');
+  const count = document.getElementById('count');
+  const orderAZ = document.getElementById('orderAZ');
+  const orderDiv = document.getElementById('orderDiv');
+
+  let state = {search:"", mode:"AZ"};
+
+  function initials(team){
+    return team.city.split(/\s+/).map(w=>w[0]).join("")
+  }
+
+  function render(){
+    let items = TEAMS.filter(t => `${t.city} ${t.name}`.toLowerCase().includes(state.search.toLowerCase()));
+    count.textContent = items.length;
+
+    if(state.mode === 'AZ'){
+      items.sort((a,b)=> (a.city+a.name).localeCompare(b.city+b.name));
+    } else {
+      items.sort((a,b)=> a.league.localeCompare(b.league) || (a.city+a.name).localeCompare(b.city+b.name));
+    }
+
+    grid.innerHTML = items.map(t=>`
+      <article class="card" data-league="${t.league}">
+        <div class="mono" aria-hidden="true">${initials(t)}</div>
+        <div>
+          <div class="name">${t.city} <b>${t.name}</b></div>
+          <div class="meta">Liga: ${t.league === 'AL' ? 'Americana' : 'Nacional'}</div>
+        </div>
+        <span class="tag">DISPONIBLE</span>
+      </article>
+    `).join('');
+  }
+
+  q.addEventListener('input', (e)=>{ state.search = e.target.value; render(); });
+  orderAZ.addEventListener('click', ()=>{ state.mode = 'AZ'; render(); });
+  orderDiv.addEventListener('click', ()=>{ state.mode = 'DIV'; render(); });
+
+  render();
+</script>
 </body>
 </html>
